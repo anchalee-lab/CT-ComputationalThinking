@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>นิทรรศการโครงงานเทคโนโลยี ภาคเรียนที่ 1 ปีการศึกษา 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#0284C7; --primary-dark:#0369A1; --primary-deep:#075985;
+  --accent:#F97316; --accent-dark:#EA580C;
+  --bg:#FFFFFF; --soft:#F0F9FF; --soft-2:#E0F2FE; --line:#BAE6FD;
+  --ink:#0C2A3F; --ink-2:#456179;
+  --font:'Google Sans','Noto Sans Thai','Sarabun',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font); background:var(--soft); color:var(--ink);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+.stage{
+  width:min(96vw, calc((100vh - 64px) * 16 / 9));
+  aspect-ratio:16/9; position:relative;
+  container-type:inline-size;
+}
+.slide{
+  position:absolute; inset:0; background:var(--bg); border-radius:2.2cqw;
+  box-shadow:0 .5cqw 2.6cqw rgba(2,132,199,.12), 0 .1cqw .4cqw rgba(12,42,63,.06);
+  padding:6.6cqw 5cqw 4cqw; overflow:hidden;
+  display:flex; flex-direction:column;
+  opacity:0; visibility:hidden; pointer-events:none; transition:opacity .35s ease, visibility .35s;
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto}
+.slide::before{ /* soft decorative blob */
+  content:""; position:absolute; right:-9cqw; top:-9cqw; width:26cqw; height:26cqw; border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, var(--soft-2), rgba(224,242,254,0) 70%); z-index:0;
+}
+.slide > *{position:relative; z-index:1}
+
+.badge{
+  position:absolute !important; left:3cqw; top:2.6cqw; z-index:2;
+  display:inline-flex; align-items:center; gap:.6cqw;
+  background:var(--soft-2); color:var(--primary-dark); font-weight:700; font-size:1.25cqw;
+  padding:.5cqw 1.3cqw; border-radius:99px; border:.1cqw solid var(--line);
+}
+.badge i{width:.7cqw; height:.7cqw; border-radius:50%; background:var(--accent); display:block}
+.pageno{
+  position:absolute !important; right:3.2cqw; bottom:2cqw; font-size:1.3cqw; font-weight:700; color:var(--ink-2);
+}
+.pageno b{color:var(--primary)}
+.foot{
+  position:absolute !important; left:3.2cqw; bottom:2cqw; font-size:1.1cqw; color:#7C97AC; font-weight:500;
+}
+
+h1,h2{font-weight:800; line-height:1.28; letter-spacing:-.01em}
+h2{font-size:3.5cqw; margin-bottom:.8cqw}
+.sub{font-size:1.75cqw; color:var(--ink-2); line-height:1.55; margin-bottom:2cqw; max-width:70cqw}
+.g{background:linear-gradient(90deg,var(--primary) 0%, var(--accent) 100%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent}
+
+/* icons */
+.ic{
+  width:5cqw; height:5cqw; border-radius:50%; flex:none;
+  display:grid; place-items:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  box-shadow:0 .4cqw 1cqw rgba(2,132,199,.28);
+  transition:transform .25s cubic-bezier(.3,1.6,.5,1), box-shadow .25s;
+}
+.ic svg{width:52%; height:52%; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.ic.o{background:linear-gradient(135deg,var(--accent),var(--accent-dark)); box-shadow:0 .4cqw 1cqw rgba(249,115,22,.32)}
+.ic.w{background:rgba(255,255,255,.2); box-shadow:none; border:.15cqw solid rgba(255,255,255,.55)}
+.ic:hover{transform:scale(1.14); box-shadow:0 .6cqw 1.4cqw rgba(2,132,199,.35)}
+.ic.o:hover{box-shadow:0 .6cqw 1.4cqw rgba(249,115,22,.4)}
+
+/* cards */
+.grid{display:grid; gap:2cqw; flex:1; min-height:0; align-content:center; padding-bottom:3cqw}
+.g3{grid-template-columns:repeat(3,1fr)}
+.card{
+  border-radius:1.8cqw; padding:2.4cqw 2.4cqw 2.6cqw; min-height:21cqw; display:flex; flex-direction:column; gap:1.2cqw; position:relative; overflow:hidden;
+}
+.card h3{font-size:2.3cqw; font-weight:800; line-height:1.3}
+.card p{font-size:1.75cqw; line-height:1.55}
+.card .num{position:absolute; right:1.6cqw; top:.8cqw; font-size:5.2cqw; font-weight:800; opacity:.13; line-height:1}
+.c-dark{background:linear-gradient(145deg,var(--primary) 0%, var(--primary-deep) 100%); color:#fff}
+.c-dark p{color:#E0F2FE}
+.c-light{background:var(--soft); border:.12cqw solid var(--line)}
+.c-light p{color:var(--ink-2)}
+.c-mid{background:linear-gradient(145deg,#E0F2FE,#BAE6FD); }
+.c-mid p{color:#2B4B63}
+.c-pop{background:linear-gradient(145deg,var(--accent),var(--accent-dark)); color:#fff}
+.c-pop p{color:#FFF1E6}
+.tag{
+  display:inline-block; align-self:flex-start; font-size:1.2cqw; font-weight:700; padding:.3cqw 1cqw; border-radius:99px;
+  background:rgba(255,255,255,.22); color:#fff;
+}
+.c-light .tag,.c-mid .tag{background:var(--primary); color:#fff}
+
+/* cover */
+.cover{flex-direction:row; align-items:center; gap:3cqw; padding-top:4.5cqw}
+.cover .left{flex:1.3; display:flex; flex-direction:column; gap:1.7cqw}
+.cover h1{font-size:5.3cqw}
+.cover .term{font-size:2.3cqw; font-weight:700; color:var(--primary-dark)}
+.chips{display:flex; flex-wrap:wrap; gap:1cqw}
+.chip{display:inline-flex; align-items:center; gap:.9cqw; padding:.7cqw 1.6cqw .7cqw .7cqw; border-radius:99px; font-size:1.55cqw; font-weight:700}
+.chip .ic{width:3.4cqw; height:3.4cqw}
+.chip.a{background:var(--soft); border:.12cqw solid var(--line)}
+.chip.b{background:#FFF3E8; border:.12cqw solid #FED7AA; color:#9A3F06}
+.cover .right{flex:.9; position:relative; align-self:stretch; display:grid; place-items:center}
+.orb{
+  width:25cqw; height:25cqw; border-radius:50%;
+  background:linear-gradient(145deg,var(--primary),var(--primary-deep));
+  display:grid; place-items:center; box-shadow:0 1.2cqw 3cqw rgba(2,132,199,.3);
+}
+.orb svg{width:11cqw; height:11cqw; stroke:#fff; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
+.float{position:absolute}
+.float .ic{width:6cqw; height:6cqw}
+
+/* stats */
+.stat{align-items:flex-start; justify-content:space-between}
+.stat .big{font-size:7cqw; font-weight:800; line-height:1}
+.stat .lbl{font-size:2cqw; font-weight:700}
+.stat p{font-size:1.5cqw}
+
+/* time */
+.slots{display:flex; flex-direction:column; gap:.9cqw; margin-top:.3cqw}
+.slot{display:flex; align-items:center; gap:.9cqw; background:rgba(255,255,255,.2); border-radius:1cqw; padding:.8cqw 1.1cqw; font-size:1.6cqw; font-weight:700}
+.c-light .slot, .c-mid .slot{background:#fff}
+.slot small{font-size:1.2cqw; font-weight:700; opacity:.85; margin-left:auto}
+
+/* quote line */
+.big-q{font-size:1.9cqw; font-weight:700; line-height:1.5}
+
+/* ending */
+.end{align-items:center; justify-content:center; text-align:center; gap:1.8cqw}
+.end h1{font-size:5.4cqw}
+.end .ic.big{width:9cqw; height:9cqw}
+
+/* animation */
+@keyframes rise{from{opacity:0; transform:translateY(3cqw) scale(.98)} to{opacity:1; transform:none}}
+.slide .a{opacity:0}
+.slide.active .a{animation:rise .7s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--i,0) * .16s + .08s)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-.8cqw)}}
+.slide.active .float{animation:bob 4.5s ease-in-out infinite}
+
+/* nav */
+.nav{display:flex; align-items:center; gap:12px; height:44px}
+.nav button{
+  font-family:inherit; border:0; cursor:pointer; background:#fff; color:var(--primary-dark); font-weight:700;
+  width:40px; height:40px; border-radius:50%; font-size:18px; box-shadow:0 2px 8px rgba(2,132,199,.18);
+  display:grid; place-items:center; transition:transform .15s, background .15s;
+}
+.nav button:hover{background:var(--primary); color:#fff; transform:scale(1.08)}
+.dots{display:flex; gap:7px}
+.dots span{width:9px; height:9px; border-radius:50%; background:var(--line); cursor:pointer; transition:all .25s}
+.dots span.on{background:var(--accent); width:26px; border-radius:6px}
+
+@media (prefers-reduced-motion:reduce){
+  .slide .a{opacity:1 !important; animation:none !important}
+  .slide.active .float{animation:none}
+}
+@media print{
+  body{display:block; overflow:visible; background:#fff}
+  .nav{display:none}
+  .stage{width:100%; aspect-ratio:auto; container-type:normal}
+  .slide{position:relative; opacity:1; visibility:visible; page-break-after:always; height:100vh}
+}
+</style>
+</head>
+<body>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-waves" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+  <symbol id="i-buoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.93 4.93 4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l4.24-4.24M4.93 19.07l4.24-4.24"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-hammer" viewBox="0 0 24 24"><path d="m14.7 6.3 3 3"/><path d="M4 20l7.5-7.5"/><path d="m12 5 3-3 7 7-3 3-2-2-2.5 2.5-3-3L13 9Z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-radio" viewBox="0 0 24 24"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"/><path d="m3.3 7.5 8.7 5 8.7-5"/><path d="M12 22V12.5"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+</svg>
+
+<div class="stage" id="stage">
+
+<!-- 1 COVER -->
+<section class="slide cover active">
+  <span class="badge"><i></i>นิทรรศการโครงงาน</span>
+  <div class="left">
+    <div class="term a" style="--i:0">ภาคเรียนที่ 1 ปีการศึกษา 2569</div>
+    <h1 class="a" style="--i:1">นิทรรศการ<br><span class="g">โครงงานเทคโนโลยี</span></h1>
+    <div class="chips">
+      <div class="chip a b" style="--i:2"><span class="ic o"><svg><use href="#i-user"/></svg></span>นำเสนอโดย ครูอัญชลี สุทธิสว่าง</div>
+      <div class="chip a" style="--i:3"><span class="ic"><svg><use href="#i-cap"/></svg></span>สำหรับนักเรียนชั้น ม.4</div>
+    </div>
+  </div>
+  <div class="right a" style="--i:2">
+    <div class="orb"><svg><use href="#i-waves"/></svg></div>
+    <div class="float" style="left:2%; top:12%"><span class="ic o"><svg><use href="#i-bell"/></svg></span></div>
+    <div class="float" style="right:0; top:34%; animation-delay:-1.5s"><span class="ic"><svg><use href="#i-cpu"/></svg></span></div>
+    <div class="float" style="left:12%; bottom:8%; animation-delay:-3s"><span class="ic"><svg><use href="#i-buoy"/></svg></span></div>
+  </div>
+  <span class="pageno"><b>01</b> / 10</span>
+</section>
+
+<!-- 2 AGENDA -->
+<section class="slide">
+  <span class="badge"><i></i>สารบัญ</span>
+  <h2 class="a" style="--i:0">วันนี้เราจะไป<span class="g">ดูอะไรกัน?</span></h2>
+  <p class="sub a" style="--i:1">สามเรื่องสั้นๆ ก่อนเดินเข้าสู่งานนิทรรศการจริง</p>
+  <div class="grid g3">
+    <div class="card c-dark a" style="--i:2"><span class="num">1</span>
+      <span class="ic w"><svg><use href="#i-waves"/></svg></span>
+      <h3>รู้จักธีมของงาน</h3><p>ปีนี้ทุกกลุ่มทำโจทย์ใกล้ตัวที่เราเจอมาเอง</p></div>
+    <div class="card c-light a" style="--i:3"><span class="num">2</span>
+      <span class="ic"><svg><use href="#i-cal"/></svg></span>
+      <h3>เวลาและจุดจัดแสดง</h3><p>ตัวเลขน่ารู้ ตารางเวลา และที่ตั้งของบูธ</p></div>
+    <div class="card c-pop a" style="--i:4"><span class="num">3</span>
+      <span class="ic w"><svg><use href="#i-search"/></svg></span>
+      <h3>ส่องผลงาน + เคล็ดลับ</h3><p>ตัวอย่างชิ้นงานเด่น และวิธีเดินชมให้ได้ประโยชน์</p></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>02</b> / 10</span>
+</section>
+
+<!-- 3 THEME -->
+<section class="slide">
+  <span class="badge"><i></i>ธีมงาน</span>
+  <h2 class="a" style="--i:0">สู้ภัย<span class="g">น้ำท่วม</span> ด้วยเทคโนโลยี</h2>
+  <p class="sub a" style="--i:1">น้ำท่วมหาดใหญ่ไม่ใช่เรื่องไกลตัว พวกเราเลยลองหาทางรับมือกันเอง</p>
+  <div class="grid g3">
+    <div class="card c-light a" style="--i:2">
+      <span class="ic o"><svg><use href="#i-eye"/></svg></span>
+      <h3>เห็นปัญหาใกล้ตัว</h3><p>เริ่มจากสิ่งที่ชุมชนเจอจริง ไม่ใช่โจทย์ในหนังสือ</p></div>
+    <div class="card c-mid a" style="--i:3">
+      <span class="ic"><svg><use href="#i-bulb"/></svg></span>
+      <h3>คิดและออกแบบเอง</h3><p>ระดมไอเดีย เลือกเทคโนโลยีที่เหมาะกับปัญหา</p></div>
+    <div class="card c-dark a" style="--i:4">
+      <span class="ic w"><svg><use href="#i-hammer"/></svg></span>
+      <h3>ลงมือสร้างชิ้นงาน</h3><p>ทำเป็นต้นแบบที่ใช้งานได้ แล้วเอามาโชว์ในงานนี้</p></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>03</b> / 10</span>
+</section>
+
+<!-- 4 NUMBERS -->
+<section class="slide">
+  <span class="badge"><i></i>ตัวเลขน่ารู้</span>
+  <h2 class="a" style="--i:0">งานนี้ใหญ่<span class="g">แค่ไหน?</span></h2>
+  <p class="sub a" style="--i:1">สรุปจากรายชื่อที่แต่ละกลุ่มลงทะเบียนไว้ (ตัวเลขโดยประมาณ)</p>
+  <div class="grid g3">
+    <div class="card stat c-dark a" style="--i:2">
+      <span class="ic w"><svg><use href="#i-users"/></svg></span>
+      <div><div class="big">80+</div><div class="lbl">กลุ่มโครงงาน</div></div>
+      <p>กลุ่มละ 3–4 คน ช่วยกันทำ</p></div>
+    <div class="card stat c-light a" style="--i:3">
+      <span class="ic"><svg><use href="#i-grid"/></svg></span>
+      <div><div class="big g">7</div><div class="lbl">ห้องเรียน</div></div>
+      <p>ม.4/1, 4/6, 4/7, 4/8, 4/9, 4/10 และ 4/20</p></div>
+    <div class="card stat c-pop a" style="--i:4">
+      <span class="ic w"><svg><use href="#i-clock"/></svg></span>
+      <div><div class="big">4</div><div class="lbl">ช่วงเวลาจัดแสดง</div></div>
+      <p>เช้า 2 ช่วง บ่าย 2 ช่วง</p></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>04</b> / 10</span>
+</section>
+
+<!-- 5 SCHEDULE -->
+<section class="slide">
+  <span class="badge"><i></i>ตารางเวลา</span>
+  <h2 class="a" style="--i:0">ไปได้<span class="g">ตอนไหนบ้าง?</span></h2>
+  <p class="sub a" style="--i:1">แต่ละกลุ่มจะอยู่ประจำบูธในช่วงเวลาที่ลงทะเบียนไว้</p>
+  <div class="grid g3">
+    <div class="card c-light a" style="--i:2">
+      <span class="ic o"><svg><use href="#i-sun"/></svg></span>
+      <h3>ภาคเช้า</h3>
+      <div class="slots">
+        <div class="slot">ช่วงที่ 1 <small>08.30 – 10.00</small></div>
+        <div class="slot">ช่วงที่ 2 <small>10.30 – 12.00</small></div>
+      </div></div>
+    <div class="card c-dark a" style="--i:3">
+      <span class="ic w"><svg><use href="#i-clock"/></svg></span>
+      <h3>ภาคบ่าย</h3>
+      <div class="slots">
+        <div class="slot">ช่วงที่ 3 <small>13.00 – 14.30</small></div>
+        <div class="slot">ช่วงที่ 4 <small>15.00 – 16.30</small></div>
+      </div></div>
+    <div class="card c-mid a" style="--i:4">
+      <span class="ic"><svg><use href="#i-pin"/></svg></span>
+      <h3>จุดจัดแสดง</h3>
+      <p>บริเวณหน้าหอประชุม และด้านข้างหอประชุม</p>
+      <span class="tag">ช่วงที่ 3 คึกคักที่สุด</span></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>05</b> / 10</span>
+</section>
+
+<!-- 6 CATEGORIES -->
+<section class="slide">
+  <span class="badge"><i></i>ประเภทผลงาน</span>
+  <h2 class="a" style="--i:0">ผลงานแบ่งได้เป็น <span class="g">3 สายหลัก</span></h2>
+  <p class="sub a" style="--i:1">จัดกลุ่มจากชื่อโครงงานที่ส่งมา เดินชมแล้วจะเห็นความต่างชัดเจน</p>
+  <div class="grid g3">
+    <div class="card c-dark a" style="--i:2"><span class="num">1</span>
+      <span class="ic w"><svg><use href="#i-bell"/></svg></span>
+      <h3>เตือนภัย &amp; วัดระดับน้ำ</h3><p>เสา ไซเรน เซนเซอร์ และแอปที่ส่งสัญญาณก่อนน้ำมา</p>
+      <span class="tag">มีมากที่สุด</span></div>
+    <div class="card c-pop a" style="--i:3"><span class="num">2</span>
+      <span class="ic w"><svg><use href="#i-buoy"/></svg></span>
+      <h3>ช่วยเหลือ &amp; ฉุกเฉิน</h3><p>ขอความช่วยเหลือ ส่งอาหาร และไฟลอยน้ำยามวิกฤต</p></div>
+    <div class="card c-light a" style="--i:4"><span class="num">3</span>
+      <span class="ic"><svg><use href="#i-shield"/></svg></span>
+      <h3>ลดต้นเหตุ &amp; ป้องกัน</h3><p>ดักขยะในท่อระบายน้ำ ประตูน้ำ และแผงกั้นน้ำ</p></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>06</b> / 10</span>
+</section>
+
+<!-- 7 EXAMPLES -->
+<section class="slide">
+  <span class="badge"><i></i>ตัวอย่างผลงาน</span>
+  <h2 class="a" style="--i:0">ชิ้นงานที่ <span class="g">น่าไปส่อง</span></h2>
+  <p class="sub a" style="--i:1">แค่ชื่อก็ชวนสงสัยแล้ว ลองไปถามเจ้าของผลงานดูนะ</p>
+  <div class="grid g3">
+    <div class="card c-dark a" style="--i:2">
+      <span class="ic w"><svg><use href="#i-cpu"/></svg></span>
+      <h3>IoT + AI พยากรณ์น้ำ</h3><p>คาดการณ์ระดับน้ำลุ่มน้ำอู่ตะเภา แล้วเตือนล่วงหน้าถึงระดับครัวเรือน</p></div>
+    <div class="card c-mid a" style="--i:3">
+      <span class="ic o"><svg><use href="#i-box"/></svg></span>
+      <h3>กล่องส่งอาหารลอยน้ำ</h3><p>ช่วยแก้ปัญหาขาดแคลนอาหารตอนน้ำล้อมบ้าน</p></div>
+    <div class="card c-light a" style="--i:4">
+      <span class="ic"><svg><use href="#i-plug"/></svg></span>
+      <h3>ตัดไฟอัตโนมัติ</h3><p>ตัดไฟทันทีเมื่อน้ำไหลเข้าอาคาร ลดอันตรายจากไฟรั่ว</p></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>07</b> / 10</span>
+</section>
+
+<!-- 8 TECH -->
+<section class="slide">
+  <span class="badge"><i></i>เบื้องหลังเทคโนโลยี</span>
+  <h2 class="a" style="--i:0">เทคโนโลยีที่ <span class="g">ซ่อนอยู่ในงาน</span></h2>
+  <p class="sub a" style="--i:1">หลายกลุ่มใช้องค์ประกอบคล้ายกัน แต่เอาไปประกอบต่างกันสุดๆ</p>
+  <div class="grid g3">
+    <div class="card c-light a" style="--i:2">
+      <span class="ic"><svg><use href="#i-radio"/></svg></span>
+      <h3>เซนเซอร์</h3><p>อัลตราโซนิกวัดระยะ สวิตช์ลูกลอย ตรวจจับระดับน้ำ</p></div>
+    <div class="card c-pop a" style="--i:3">
+      <span class="ic w"><svg><use href="#i-phone"/></svg></span>
+      <h3>แจ้งเตือนถึงมือเรา</h3><p>ผ่านแอป เว็บ ไลน์ ไซเรน หรือไฟสัญญาณ</p></div>
+    <div class="card c-dark a" style="--i:4">
+      <span class="ic w"><svg><use href="#i-cpu"/></svg></span>
+      <h3>IoT &amp; AI</h3><p>ให้อุปกรณ์เชื่อมต่อกัน และช่วยวิเคราะห์ข้อมูล</p></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>08</b> / 10</span>
+</section>
+
+<!-- 9 TIPS -->
+<section class="slide">
+  <span class="badge"><i></i>เคล็ดลับเดินชม</span>
+  <h2 class="a" style="--i:0">เดินชมยังไงให้ <span class="g">ได้ความรู้เต็มๆ</span></h2>
+  <p class="sub a" style="--i:1">ไม่ต้องจดทุกอย่าง แค่จำ 3 ข้อนี้ก็พอ</p>
+  <div class="grid g3">
+    <div class="card c-mid a" style="--i:2"><span class="num">1</span>
+      <span class="ic"><svg><use href="#i-chat"/></svg></span>
+      <h3>ถามให้เป็น</h3><p>“ชิ้นงานนี้แก้ปัญหาอะไร?” เป็นคำถามเริ่มต้นที่ดีมาก</p></div>
+    <div class="card c-dark a" style="--i:3"><span class="num">2</span>
+      <span class="ic w"><svg><use href="#i-eye"/></svg></span>
+      <h3>ดูของจริง</h3><p>ขอให้เพื่อนสาธิตการทำงาน แล้วสังเกตว่าเกิดอะไรขึ้นบ้าง</p></div>
+    <div class="card c-pop a" style="--i:4"><span class="num">3</span>
+      <span class="ic w"><svg><use href="#i-bulb"/></svg></span>
+      <h3>เสนอไอเดียต่อยอด</h3><p>คิดมา 1 ข้อว่าอยากให้ชิ้นงานนี้ดีขึ้นตรงไหน</p></div>
+  </div>
+  <span class="foot">นิทรรศการโครงงานเทคโนโลยี 2569</span><span class="pageno"><b>09</b> / 10</span>
+</section>
+
+<!-- 10 THANKS -->
+<section class="slide end">
+  <span class="badge"><i></i>ขอบคุณ</span>
+  <span class="ic o big a" style="--i:0"><svg><use href="#i-heart"/></svg></span>
+  <h1 class="a" style="--i:1">เจอกันที่<span class="g">นิทรรศการ</span>!</h1>
+  <p class="big-q a" style="--i:2">ขอบคุณทุกกลุ่มที่ตั้งใจทำ และขอบคุณทุกคนที่มาเป็นกำลังใจ</p>
+  <div class="chips a" style="--i:3; justify-content:center">
+    <div class="chip b"><span class="ic o"><svg><use href="#i-user"/></svg></span>ครูอัญชลี สุทธิสว่าง</div>
+    <div class="chip"><span class="ic"><svg><use href="#i-star"/></svg></span>ภาคเรียนที่ 1 / 2569</div>
+  </div>
+  <span class="pageno"><b>10</b> / 10</span>
+</section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="หน้าก่อนหน้า">&#8249;</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" aria-label="หน้าถัดไป">&#8250;</button>
+  <button id="fs" aria-label="เต็มจอ" title="เต็มจอ (F)" style="font-size:15px">&#9974;</button>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var dots=document.getElementById('dots'), cur=0;
+  slides.forEach(function(_,i){
+    var d=document.createElement('span'); d.onclick=function(){go(i)}; dots.appendChild(d);
+  });
+  function go(n){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    slides[cur].classList.remove('active');
+    cur=n;
+    // restart animations
+    void slides[cur].offsetWidth;
+    slides[cur].classList.add('active');
+    [].forEach.call(dots.children,function(d,i){d.classList.toggle('on',i===cur)});
+    try{history.replaceState(null,'','#'+(cur+1))}catch(e){}
+  }
+  document.getElementById('prev').onclick=function(){go(cur-1)};
+  document.getElementById('next').onclick=function(){go(cur+1)};
+  document.getElementById('fs').onclick=toggleFs;
+  function toggleFs(){
+    if(!document.fullscreenElement){(document.documentElement.requestFullscreen||function(){}).call(document.documentElement)}
+    else{document.exitFullscreen()}
+  }
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].indexOf(e.key)>-1){e.preventDefault();go(cur+1)}
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(e.key)>-1){e.preventDefault();go(cur-1)}
+    else if(e.key==='Home')go(0);
+    else if(e.key==='End')go(slides.length-1);
+    else if(e.key==='f'||e.key==='F')toggleFs();
+  });
+  var sx=null;
+  document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(sx===null)return; var dx=e.changedTouches[0].clientX-sx; sx=null;
+    if(Math.abs(dx)>50) go(cur+(dx<0?1:-1));
+  });
+  var start=parseInt((location.hash||'').slice(1),10);
+  slides[0].classList.remove('active');
+  cur=0; go(isNaN(start)?0:start-1);
+  window.addEventListener('hashchange',function(){var n=parseInt(location.hash.slice(1),10);if(!isNaN(n)&&n-1!==cur)go(n-1)});
+})();
+</script>
+</body>
+</html>
